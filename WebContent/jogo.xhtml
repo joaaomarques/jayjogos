@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+
+
+<ui:composition template="_template.xhtml">
+
+	<f:metadata>
+		<f:viewParam name="jogoId" value="#{jogoBean.jogoId}" />
+		<f:viewAction action="#{jogoBean.buscarJogoPelaId}"
+			if="#{param.jogoId != null}" />
+	</f:metadata>
+
+
+	<ui:define name="titulo">
+		Novo Jogo
+	</ui:define>
+	<ui:define name="conteudo">
+		<h:form>
+			<p:messages id="messages" />
+
+			<p:fieldset legend="Dados do Jogo">
+
+				<p:panelGrid columns="2">
+					<p:outputLabel value="Nome" for="nome" />
+					<p:inputText id="nome" value="#{jogoBean.jogo.nome}"
+						required="true" requiredMessage="Nome do jogo obrigatório"
+						validatorMessage="Nome não pode conter mais de 40 caracteres">
+						<f:validateLength maximum="40" />
+						<f:ajax event="blur" render="messages" />
+					</p:inputText>
+
+					<p:outputLabel value="Preço" for="preco" />
+					<p:inputNumber id="preco" value="#{jogoBean.jogo.preco}"
+						symbol="R$" symbolPosition="p" decimalSeparator=","
+						thousandSeparator=".">
+						<p:ajax update="preco" />
+					</p:inputNumber>
+
+
+					<p:outputLabel value="Estilo" for="estilo" />
+					<p:inputText id="estilo" value="#{jogoBean.jogo.estilo}" />
+				</p:panelGrid>
+			</p:fieldset>
+			<p:fieldset legend="Dados da Empresa">
+				<p:outputLabel value="Selecione Empresa: " for="empresa" />
+				<p:selectOneMenu value="#{jogoBean.empresaId}" id="empresa">
+					<f:selectItems value="#{jogoBean.empresas}" var="empresa"
+						itemLabel="#{empresa.nomeEmpresa}" itemValue="#{empresa.id}" />
+				</p:selectOneMenu>
+
+				<br />
+
+				<p:commandLink value="Cadastrar Nova Empresa"
+					action="#{jogoBean.formEmpresa}" immediate="true" update="@all" />
+
+			</p:fieldset>
+			<p:commandButton value="Gravar" action="#{jogoBean.gravar}"
+				process="@form" update="@form :formTabelaJogos:tabelaJogos" />
+		</h:form>
+
+		<h:form id="formTabelaJogos">
+			<p:dataTable value="#{jogoBean.jogos}" var="jogo" id="tabelaJogos">
+					<f:facet name="header">
+            
+        			</f:facet>
+					<p:column style="width:16px">
+						<p:rowToggler />
+					</p:column>
+					<p:column headerText="Jogo">
+						<h:outputText value="#{jogo.nome}" />
+					</p:column>
+					<p:column headerText="Empresa">
+						<h:outputText value="#{jogo.empresa.nomeEmpresa}" />
+					</p:column>
+					<p:rowExpansion>
+            <p:panelGrid  columns="2" columnClasses="label,value" style="width:300px">
+                <f:facet name="header">
+                    <img src="#{jogo.imagem}"/>
+                </f:facet>
+ 
+          		
+            </p:panelGrid>
+        </p:rowExpansion>
+					<h:column>
+						<f:facet name="header">Estilo</f:facet>
+						<h:outputText value="#{jogo.estilo}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">Empresa</f:facet>
+						<h:outputText value="#{jogo.empresa.nomeEmpresa}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">Alterar</f:facet>
+						<p:commandLink value="alterar" action="#{jogoBean.alterar(jogo)}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">Remover</f:facet>
+						<p:commandLink value="remove" action="#{jogoBean.remover(jogo)}" />
+					</h:column>
+				</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>
